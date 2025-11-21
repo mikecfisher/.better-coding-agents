@@ -1,0 +1,24 @@
+{
+  "appId": "com.powersync.example",
+  "appName": "powersync-capacitor",
+  "bundledWebRuntime": false,
+  "webDir": "dist",
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 0
+    }
+  },
+  "android": {
+    "loggingBehavior": "production",
+    "buildOptions": {
+      "releaseType": "APK",
+      "keystorePath": "debug-isolated.keystore",
+      "keystorePassword": "android",
+      "keystoreAlias": "androiddebugkey",
+      "keystoreAliasPassword": "android"
+    }
+  },
+  "ios": {
+    "loggingBehavior": "production"
+  }
+}

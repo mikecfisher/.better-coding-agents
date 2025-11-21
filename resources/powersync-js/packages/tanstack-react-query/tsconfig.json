@@ -1,0 +1,18 @@
+{
+  "extends": "../../tsconfig.base",
+  "compilerOptions": {
+    "baseUrl": "./",
+    "jsx": "react",
+    "rootDir": "src",
+    "module": "node16",
+    "moduleResolution": "node16",
+    "outDir": "./lib",
+    "lib": ["es2022", "DOM"]
+  },
+  "references": [
+    {
+      "path": "../common"
+    }
+  ],
+  "include": ["src/**/*"]
+}

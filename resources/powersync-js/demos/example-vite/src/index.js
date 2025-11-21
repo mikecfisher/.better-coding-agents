@@ -1,0 +1,70 @@
+import { PowerSyncDatabase, Schema, Table, column, createBaseLogger } from '@powersync/web';
+
+createBaseLogger().useDefaults();
+
+/**
+ * A placeholder connector which doesn't do anything.
+ * This is just used to verify that the sync workers can be loaded
+ * when connecting.
+ */
+class DummyConnector {
+  async fetchCredentials() {
+    return {
+      endpoint: '',
+      token: ''
+    };
+  }
+
+  async uploadData(database) {}
+}
+
+const customers = new Table({ name: column.text });
+
+export const AppSchema = new Schema({ customers });
+
+let PowerSync;
+
+const openDatabase = async () => {
+  PowerSync = new PowerSyncDatabase({
+    schema: AppSchema,
+    database: { dbFilename: 'test.sqlite' }
+  });
+
+  await PowerSync.init();
+
+  // Run local statements.
+  await PowerSync.execute('INSERT INTO customers(id, name) VALUES(uuid(), ?)', ['Fred']);
+
+  const result = await PowerSync.getAll('SELECT * FROM customers');
+  console.log('contents of customers: ', result);
+
+  // Display customers in the HTML list
+  const customersList = document.getElementById('customers-list');
+  if (customersList) {
+    // Clear existing list items
+    customersList.textContent = '';
+    // Create and append list items
+    result.forEach((customer) => {
+      const listItem = document.createElement('li');
+      listItem.textContent = customer.name || 'Unknown';
+      customersList.appendChild(listItem);
+    });
+  }
+
+  console.log(
+    `Attempting to connect in order to verify web workers are correctly loaded.
+    This doesn't use any actual network credentials.
+    Network errors will be shown: these can be ignored.`
+  );
+
+  /**
+   * Try and connect, this will setup shared sync workers
+   * This will fail due to not having a valid endpoint,
+   * but it will try - which is all that matters.
+   */
+  await PowerSync.connect(new DummyConnector());
+};
+
+document.addEventListener('DOMContentLoaded', (event) => {
+  openDatabase();
+});

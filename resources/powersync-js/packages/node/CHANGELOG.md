@@ -1,0 +1,361 @@
+# @powersync/node
+
+## 0.14.2
+
+### Patch Changes
+
+- Updated dependencies [507197f]
+  - @powersync/common@1.43.0
+
+## 0.14.1
+
+### Patch Changes
+
+- Updated dependencies [66218b2]
+- Updated dependencies [3af4a2c]
+  - @powersync/common@1.42.0
+
+## 0.14.0
+
+### Minor Changes
+
+- b7a150a: Add support for concurrent read queries with Drizzle.
+
+### Patch Changes
+
+- 3e4a25c: Don't minify releases, enable source maps.
+- d3808db: Throw when database is used after being closed.
+- Updated dependencies [3e4a25c]
+  - @powersync/common@1.41.1
+
+## 0.13.0
+
+### Minor Changes
+
+- 2f8b30c: Populate Table `name` values in `schema.props` for Schemas created with typed `Table`s. e.g. `schema.props['some_table'].name` will contain the table name.
+
+### Patch Changes
+
+- b00e1ec: [`node:sqlite`] Prevent `database is locked` errors when instantiating the database.
+- Updated dependencies [2f8b30c]
+  - @powersync/common@1.41.0
+
+## 0.12.0
+
+### Minor Changes
+
+- 688265f: Experimental support for integrating with node:sqlite.
+- 688265f: Support custom better-sqlite3 forks (see an example for encryption in the README).
+- aa90aa0: Pre-package all the PowerSync Rust extension binaries for all supported platforms and architectures in the NPM package `lib` folder. Install scripts are no longer required to download the PowerSync core.
+
+  The binary files relevant to a specific architecture now have updated filenames. Custom code which previously referenced binary filenames requires updating. A helper function is available to automatically provide the correct filename.
+
+  ```diff
+  + import { getPowerSyncExtensionFilename } from '@powersync/node/worker.js';
+
+  function resolvePowerSyncCoreExtension() {
+  -  const platform = OS.platform();
+  -  let extensionPath: string;
+  -  if (platform === 'win32') {
+  -    extensionPath = 'powersync.dll';
+  -  } else if (platform === 'linux') {
+  -    extensionPath = 'libpowersync.so';
+  -  } else if (platform === 'darwin') {
+  -    extensionPath = 'libpowersync.dylib';
+  -  } else {
+  -    throw 'Unknown platform, PowerSync for Node.js currently supports Windows, Linux and macOS.';
+  -  }
+  +  const extensionPath = getPowerSyncExtensionFilename();
+
+    // This example uses copy-webpack-plugin to copy the prebuilt library over. This ensures that it is
+    // available in packaged release builds.
+    let libraryPath = path.resolve(__dirname, 'powersync', extensionPath);
+  ```
+
+- 688265f: Use upstream better-sqlite3 dependency instead of the PowerSync fork.
+
+  After upgrading:
+
+  1. Ensure you no longer depend on the `@powersync/better-sqlite3` package: `npm uninstall @powersync/better-sqlite3`.
+  2. Unlike in older versions, the upstream `better-sqlite3` dependency is marked as optional since custom forks
+     are supported too.
+     Use `npm install better-sqlite3` to install it.
+
+## 0.11.1
+
+### Patch Changes
+
+- Updated dependencies [c2bc2c1]
+  - @powersync/common@1.40.0
+
+## 0.11.0
+
+### Minor Changes
+
+- eff8cbf: Add alpha support for sync streams, allowing different sets of data to be synced dynamically.
+
+### Patch Changes
+
+- c78071f: Update core extension to 0.4.6
+- Updated dependencies [eff8cbf]
+  - @powersync/common@1.39.0
+
+## 0.10.2
+
+### Patch Changes
+
+- Updated dependencies [a0ee132]
+- Updated dependencies [ba72a58]
+  - @powersync/common@1.38.1
+
+## 0.10.1
+
+### Patch Changes
+
+- 9003153: Update core extension to 0.4.5
+- Updated dependencies [ce40042]
+- Updated dependencies [9003153]
+- Updated dependencies [4d532d4]
+  - @powersync/common@1.38.0
+
+## 0.10.0
+
+### Minor Changes
+
+- c910c66: Add `getCrudTransactions()`, returning an async iterator of transactions. This can be used to batch transactions when uploading CRUD data.
+- 9e3e3a5: Added SQLite trigger based table change tracking.
+
+### Patch Changes
+
+- 47294f2: Update PowerSync core extension to version 0.4.4
+- Updated dependencies [876c550]
+- Updated dependencies [c910c66]
+- Updated dependencies [9e3e3a5]
+  - @powersync/common@1.37.0
+
+## 0.9.0
+
+### Minor Changes
+
+- 7ad251a: Added CJS specific type declarations.
+
+### Patch Changes
+
+- Updated dependencies [7609155]
+- Updated dependencies [7ad251a]
+- Updated dependencies [7f2c53d]
+  - @powersync/common@1.36.0
+
+## 0.8.1
+
+### Patch Changes
+
+- 6b38551: Fix a warning about raw tables being used when they're not.
+- Updated dependencies [319012e]
+- Updated dependencies [c7d2b53]
+- Updated dependencies [6b38551]
+- Updated dependencies [a1abb15]
+  - @powersync/common@1.35.0
+
+## 0.8.0
+
+### Minor Changes
+
+- ab33799: Add experimental support for raw tables, giving you full control over the table structure to sync into.
+  While PowerSync manages tables as JSON views by default, raw tables have to be created by the application
+  developer.
+
+  For more information about raw tables, see [the documentation](https://docs.powersync.com/usage/use-case-examples/raw-tables).
+
+- 810c6ad: Propagate logger from PowerSyncDatabase to streaming sync and remote implementations, and tweak some log messages.
+
+### Patch Changes
+
+- 9fb898d: Fixed an issue where `readLock` and `writeLock` calls were unnecessarily serialized due to a shared mutex. This did not affect individual calls to `get`, `getAll`, or `getOptional`.
+- a9f6eba: Update PowerSync core extension to 0.4.2
+- a1aa18c: Fix sync stream delays during CRUD upload.
+- Updated dependencies [ab33799]
+- Updated dependencies [810c6ad]
+- Updated dependencies [a1aa18c]
+- Updated dependencies [9fb898d]
+  - @powersync/common@1.34.0
+
+## 0.7.1
+
+### Patch Changes
+
+- Updated dependencies [9b2bde3]
+  - @powersync/common@1.33.2
+
+## 0.7.0
+
+### Minor Changes
+
+- 31e942f: Upgrade undici and use the default undici errors for WebSockets.
+
+### Patch Changes
+
+- ffe3095: Improve websocket keepalive logic to reduce keepalive errors.
+- 53236a8: Rust client: Properly upload CRUD entries made while offline.
+- d1b7fcb: Rust sync client: Fix reported `lastSyncedAt` values in sync status.
+- Updated dependencies [ffe3095]
+- Updated dependencies [36d8f28]
+- Updated dependencies [53236a8]
+- Updated dependencies [b7255b7]
+- Updated dependencies [70a9cf5]
+- Updated dependencies [d1b7fcb]
+  - @powersync/common@1.33.1
+
+## 0.6.0
+
+### Minor Changes
+
+- cbb20c0: This adds a new (and currently experimental) sync client implementation
+  implemented natively in the PowerSync SQLite extension.
+
+  This implementation will eventually become the default, but we encourage
+  interested users to try it out. In particular, we expect that it can improve
+  sync performance (especially on platforms with challenging JS performance,
+  like React Native).
+
+  On all our JavaScript SDKs, the new implementation can be enabled with a
+  sync option entry when connecting:
+
+  ```JS
+  await db.connect(new MyConnector(), {
+    clientImplementation: SyncClientImplementation.RUST
+  });
+  ```
+
+  Since the new client implements the same protocol, you can also migrate back
+  to the JavaScript client later by removing the `clientImplementation` option.
+
+  **However**: After enabling the `RUST` client, you cannot downgrade your
+  PowerSync SDK below this version. When enabled for the first time, databases
+  will be migrated. The JavaScript sync client from this and later SDK versions
+  understands the new format, but the client from an older SDK version will not!
+
+### Patch Changes
+
+- 0446f15: Update PowerSync core extension to 0.4.0
+- Updated dependencies [cbb20c0]
+- Updated dependencies [7e8bb1a]
+  - @powersync/common@1.33.0
+
+## 0.5.0
+
+### Minor Changes
+
+- 96ddd5d: Improved behaviour when connect is called multiple times in quick succession. Updating client parameters should now be more responsive.
+- efc8ba9: Switch to undici WebSocket for Dispatcher and diagnostics_channel support. This now adds support for the `ALL_PROXY` environment variable by default, as well as `WSS_PROXY` for websocket connections.
+
+### Patch Changes
+
+- Updated dependencies [96ddd5d]
+- Updated dependencies [96ddd5d]
+- Updated dependencies [efc8ba9]
+  - @powersync/common@1.32.0
+
+## 0.4.5
+
+### Patch Changes
+
+- Updated dependencies [b046ebe]
+  - @powersync/common@1.31.1
+
+## 0.4.4
+
+### Patch Changes
+
+- 5eae93c: Fix CJS distributables not being published.
+
+## 0.4.3
+
+### Patch Changes
+
+- 2e03dd6: Add a `main` entry to `package.json`. It will be ignored because the package uses conditional exports, but is required for tools like `pkg`.
+- 2e03dd6: Support `@powersync/better-sqlite3` versions `0.2.x`.
+
+## 0.4.2
+
+### Patch Changes
+
+- Updated dependencies [0565a0a]
+  - @powersync/common@1.31.0
+
+## 0.4.1
+
+### Patch Changes
+
+- Updated dependencies [2949d58]
+- Updated dependencies [c30cbef]
+  - @powersync/common@1.30.0
+
+## 0.4.0
+
+### Minor Changes
+
+- ed11438: Report progress information about downloaded rows. Sync progress is available through `SyncStatus.downloadProgress`.
+
+### Patch Changes
+
+- 4f68f6a: Update core extension version to 0.3.14
+- Updated dependencies [ed11438]
+  - @powersync/common@1.29.0
+
+## 0.3.0
+
+### Minor Changes
+
+- f40ecf9: Introduced support for specifying proxy environment variables for the connection methods. For HTTP it supports `HTTP_PROXY` or `HTTPS_PROXY`, and for WebSockets it supports `WS_PROXY` and `WSS_PROXY`.
+
+### Patch Changes
+
+- 6807df6: Using logger types from @powersync/common.
+- Updated dependencies [6807df6]
+- Updated dependencies [e71dc94]
+- Updated dependencies [f40ecf9]
+  - @powersync/common@1.28.0
+
+## 0.2.2
+
+### Patch Changes
+
+- Updated dependencies [720ad7a]
+  - @powersync/common@1.27.1
+
+## 0.2.1
+
+### Patch Changes
+
+- 1c2ee86: Update README with common installation issues section
+- Updated dependencies [b722378]
+  - @powersync/common@1.27.0
+
+## 0.2.0
+
+### Minor Changes
+
+- f8fd814: Introduced `executeRaw`, which processes SQLite query results differently to preserve all columns, preventing duplicate column names from being overwritten.
+
+### Patch Changes
+
+- 8c14e99: Include CommonJS distribution for this package.
+- 2709a2e: Fix compilation errors on Windows.
+- 2709a2e: Provide a more actionable error message when using the `dbLocation` option with a directory that doesn't exist.
+- Updated dependencies [f8fd814]
+  - @powersync/common@1.26.0
+
+## 0.1.1
+
+### Patch Changes
+
+- 0c8ddda: Update package description
+- 2551b40: Update readme to reflect alpha status.
+- 7c118b6: Update readme to refer to Node.js docs
+
+## 0.1.0
+
+### Minor Changes
+
+- 12c6649: Initial version
