@@ -1,130 +1,72 @@
-<div align="center">
-  <img src="./media/header_db.png" >
-</div>
+# Welcome to TanStack.com!
 
-<br />
+This site is built with TanStack Router!
 
-<div align="center">
-	<a href="https://npmjs.com/package/@tanstack/db" target="\_parent">
-	  <img alt="" src="https://img.shields.io/npm/dm/@tanstack/db.svg" alt="npm downloads" />
-	</a>
-	<a href="https://github.com/TanStack/db" target="\_parent">
-	  <img alt="" src="https://img.shields.io/github/stars/TanStack/db.svg?style=social&label=Star" alt="GitHub stars" />
-	</a>
-	<a href="https://bundlejs.com/?q=%40tanstack%2Fdb&config=%7B%22esbuild%22%3A%7B%22external%22%3A%5B%22react%22%2C%22react-dom%22%5D%7D%7D&badge=" target="\_parent">
-	  <img alt="" src="https://deno.bundlejs.com/?q=@tanstack/db&config={%22esbuild%22:{%22external%22:[%22react%22,%22react-dom%22]}}&badge=detailed" alt="Bundle size" />
-	</a>
-</div>
+- [TanStack Router Docs](https://tanstack.com/router)
 
-<div align="center">
-	<a href="#status">
-    <img src="https://img.shields.io/badge/status-beta-yellow" alt="Status - BETA">
-  </a>
-	<a href="https://bestofjs.org/projects/tanstack-db">
-		<img alt="Best of JS" src="https://img.shields.io/endpoint?url=https://bestofjs-serverless.now.sh/api/project-badge?fullName=TanStack%2Fdb%26since=daily" alt="Best of JS"/>
-	</a>
-	<a href="https://twitter.com/tan_stack">
-		<img src="https://img.shields.io/twitter/follow/tan_stack.svg?style=social" alt="Follow @TanStack"/>
-	</a>
-</div>
+It's deployed automagically with Netlify!
 
-<div align="center">
-		
-###  [Become a Sponsor!](https://github.com/sponsors/tannerlinsley/)
-</div>
+- [Netlify](https://netlify.com/)
 
-# TanStack DB
+## Development
 
-> Tanstack DB is currently in BETA. See [the release post](https://tanstack.com/blog/tanstack-db-0.1-the-embedded-client-database-for-tanstack-query) for more details.
+From your terminal:
 
-The reactive client store for your API.
+```sh
+pnpm install
+pnpm dev
+```
 
-TanStack DB solves the problems of building fast, modern apps, helping you:
+This starts your app in development mode, rebuilding assets on file changes.
 
-- Avoid endpoint sprawl and network waterfalls by loading data into normalized collections
-- Optimise client performance with sub-millisecond live queries and real-time reactivity
-- Take the network off the interaction path with instant optimistic writes
+## Editing and previewing the docs of TanStack projects locally
 
-Data loading is optimized. Interactions feel instantaneous. Your backend stays simple and your app stays blazing fast. No matter how much data you load.
+The documentations for all TanStack projects except for `React Charts` are hosted on [https://tanstack.com](https://tanstack.com), powered by this TanStack Router app.
+In production, the markdown doc pages are fetched from the GitHub repos of the projects, but in development they are read from the local file system.
 
-<a href="https://tanstack.com/db" style="font-weight:bold" >Read the docs →</a>
-<br />
+Follow these steps if you want to edit the doc pages of a project (in these steps we'll assume it's [`TanStack/form`](https://github.com/tanstack/form)) and preview them locally :
 
-## Get Involved
+1. Create a new directory called `tanstack`.
 
-- We welcome issues and pull requests!
-- Participate in [GitHub discussions](https://github.com/TanStack/db/discussions)
-- Chat with the community on [Discord](https://discord.com/invite/WrRKjPJ)
-- See [CONTRIBUTING.md](./CONTRIBUTING.md) for setup instructions
+```sh
+mkdir tanstack
+```
 
-## Partners
+2. Enter the directory and clone this repo and the repo of the project there.
 
-<table align="center">
-<tr>
-<td>
-<a href="https://www.coderabbit.ai/?via=tanstack&dub_id=aCcEEdAOqqutX6OS" >
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://tanstack.com/assets/coderabbit-dark-CMcuvjEy.svg" height="40" />
-  <source media="(prefers-color-scheme: light)" srcset="https://tanstack.com/assets/coderabbit-light-DVMJ2jHi.svg" height="40" />
-  <img src="https://tanstack.com/assets/coderabbit-light-DVMJ2jHi.svg" height="40" alt="CodeRabbit" />
-</picture>
-</a>
-</td>
-<td>
-<a href="https://www.cloudflare.com?utm_source=tanstack">
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://tanstack.com/assets/cloudflare-white-DQDB7UaL.svg" height="60" />
-  <source media="(prefers-color-scheme: light)" srcset="https://tanstack.com/assets/cloudflare-black-CPufaW0B.svg" height="60" />
-  <img src="https://tanstack.com/assets/cloudflare-black-CPufaW0B.svg" height="60" alt="Cloudflare" />
-</picture>
-</a>
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://electric-sql.com">
-<picture>
-	<source media="(prefers-color-scheme: dark)" srcset="https://tanstack.com/assets/electric-dark-Bfu2Vl2j.svg" height="60">
-	<source media="(prefers-color-scheme: light)" srcset="https://tanstack.com/assets/electric-light-C-5MDda4.svg" height="60">
-	<img src="https://raw.githubusercontent.com/electric-sql/meta/main/identity/ElectricSQL-logo.with-background.sm.png" height="60" alt="ElectricSQL logo"/>
-</picture>
-</a>
-</td>
-<td>
-<a href="https://www.prisma.io?utm_source=tanstack&via=tanstack">
-<picture>
-	<source media="(prefers-color-scheme: dark)" srcset="https://tanstack.com/assets/prisma-dark-DwgDxLwn.svg" height="60">
-	<source media="(prefers-color-scheme: light)" srcset="https://tanstack.com/assets/prisma-light-Cloa3Onm.svg" height="60">
-	<img src="https://tanstack.com/assets/prisma-dark-DwgDxLwn.svg" height="60" alt="Prisma"/>
-</picture>
-</a>
-</td>
-</tr>
-</table>
+```sh
+cd tanstack
+git clone git@github.com:TanStack/tanstack.com.git
+git clone git@github.com:TanStack/form.git
+```
 
-<div align="center">
-<img src="./media/partner_logo.svg" alt="DB & you?" height="65">
-<p>
-We're looking for TanStack DB Partners to join our mission! Partner with us to push the boundaries of TanStack DB and build amazing things together.
-</p>
-<a href="mailto:partners@tanstack.com?subject=TanStack DB Partnership"><b>LET'S CHAT</b></a>
-</div>
+> [!NOTE]
+> Your `tanstack` directory should look like this:
+>
+> ```
+> tanstack/
+>    |
+>    +-- form/
+>    |
+>    +-- tanstack.com/
+> ```
 
-## Explore the TanStack Ecosystem
+> [!WARNING]
+> Make sure the name of the directory in your local file system matches the name of the project's repo. For example, `tanstack/form` must be cloned into `form` (this is the default) instead of `some-other-name`, because that way, the doc pages won't be found.
 
-- <a href="https://github.com/tanstack/config"><b>TanStack Config</b></a> – Tooling for JS/TS packages
-- <a href="https://github.com/tanstack/devtools"><b>TanStack DevTools</b></a> – Unified devtools panel
-- <a href="https://github.com/tanstack/form"><b>TanStack Form</b></a> – Type‑safe form state
-- <a href="https://github.com/tanstack/pacer"><b>TanStack Pacer</b></a> – Debouncing, throttling, batching <br/>
-- <a href="https://github.com/tanstack/query"><b>TanStack Query</b></a> – Async state & caching
-- <a href="https://github.com/tanstack/ranger"><b>TanStack Ranger</b></a> – Range & slider primitives
-- <a href="https://github.com/tanstack/router"><b>TanStack Router</b></a> – Type‑safe routing, caching & URL state
-- <a href="https://github.com/tanstack/router"><b>TanStack Start</b></a> – Full‑stack SSR & streaming
-- <a href="https://github.com/tanstack/store"><b>TanStack Store</b></a> – Reactive data store
-- <a href="https://github.com/tanstack/table"><b>TanStack Table</b></a> – Headless datagrids
-- <a href="https://github.com/tanstack/virtual"><b>TanStack Virtual</b></a> – Virtualized rendering
+3. Enter the `tanstack/tanstack.com` directory, install the dependencies and run the app in dev mode:
 
-… and more at <a href="https://tanstack.com"><b>TanStack.com »</b></a>
-v>
+```sh
+cd tanstack.com
+pnpm i
+# The app will run on https://localhost:3000 by default
+pnpm dev
+```
 
-<!-- Use the force, Luke -->
+4. Now you can visit http://localhost:3000/form/latest/docs/overview in the browser and see the changes you make in `tanstack/form/docs`.
+
+> [!NOTE]
+> The updated pages need to be manually reloaded in the browser.
+
+> [!WARNING]
+> You will need to update the `docs/config.json` file (in the project's repo) if you add a new doc page!
