@@ -1,41 +1,24 @@
 {
-  "$schema": "https://json.schemastore.org/tsconfig",
+  "include": ["**/*.ts", "**/*.tsx"],
   "compilerOptions": {
-    "allowJs": true,
-    "allowSyntheticDefaultImports": true,
-    "allowUnreachableCode": false,
-    "allowUnusedLabels": false,
-    "checkJs": true,
-    "declaration": true,
+    "strict": true,
     "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "isolatedModules": true,
-    "lib": ["DOM", "DOM.Iterable", "ES2022"],
-    "module": "ES2022",
+    "jsx": "react-jsx",
+    "module": "ESNext",
     "moduleResolution": "Bundler",
-    "noEmit": true,
-    "noImplicitReturns": true,
-    "noUncheckedIndexedAccess": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": false, // Let ESLint handle this
+    "lib": ["DOM", "DOM.Iterable", "ES2022"],
+    "isolatedModules": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
-    "strict": true,
-    "target": "ES2020",
-    "noErrorTruncation": true
-  },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "test/**/*.ts",
-    "vite.config.ts",
-    "vitest.config.ts",
-    "todo-app/**/*.ts",
-    "todo-app/**/*.tsx",
-    "examples/**/*.ts",
-    "examples/**/*.tsx",
-    "eslint.config.js",
-    "scripts/*.ts"
-  ],
-  "exclude": ["node_modules"]
+    "target": "ES2022",
+    "allowJs": true,
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["./src/*"],
+      "content-collections": ["./.content-collections/generated"]
+    },
+    "types": ["vite/client"],
+    "noEmit": true
+  }
 }
