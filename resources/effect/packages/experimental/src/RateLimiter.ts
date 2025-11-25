@@ -63,6 +63,7 @@ export const make: Effect.Effect<
       const window = Duration.decode(options.window)
       const windowMillis = Duration.toMillis(window)
       const refillRate = Duration.unsafeDivide(window, options.limit)
+      const refillRateMillis = Duration.toMillis(refillRate)
 
       if (tokens > options.limit) {
         return onExceeded === "fail"
@@ -110,16 +111,16 @@ export const make: Effect.Effect<
                 resetAfter: Duration.millis(ttl)
               })
             }
-            const windowsTotal = Math.floor(count / options.limit) * windowMillis
-            const windowsExpired = Math.max(0, Math.floor((windowsTotal - ttl) / windowMillis))
-            count = count - windowsExpired * options.limit
-            const windowsOver = Math.max(0, Math.ceil(count / options.limit) - 1)
-            const delay = windowsOver === 0 ? Duration.zero : Duration.times(window, windowsOver)
+            const ttlTotal = count * refillRateMillis
+            const elapsed = ttlTotal - ttl
+            const windowNumber = Math.floor((count - 1) / options.limit)
+            const remaining = (windowNumber * windowMillis) - elapsed
+            const delay = remaining <= 0 ? Duration.zero : Duration.millis(remaining)
             return Effect.succeed<ConsumeResult>({
               delay,
               limit: options.limit,
               remaining: options.limit - count,
-              resetAfter: Duration.times(window, windowsOver + 1)
+              resetAfter: Duration.times(window, Math.ceil(ttl / windowMillis))
             })
           }
         )
@@ -181,6 +182,103 @@ export const layer: Layer.Layer<
   never,
   RateLimiterStore
 > = Layer.effect(RateLimiter, make)
+
+/**
+ * Access a function that applies rate limiting to an effect.
+ *
+ * ```ts
+ * import { RateLimiter } from "@effect/experimental"
+ * import { Effect } from "effect"
+ *
+ * Effect.gen(function*() {
+ *   // Access the `withLimiter` function from the RateLimiter module
+ *   const withLimiter = yield* RateLimiter.makeWithRateLimiter
+ *
+ *   // Apply a rate limiter to an effect
+ *   yield* Effect.log("Making a request with rate limiting").pipe(
+ *     withLimiter({
+ *       key: "some-key",
+ *       limit: 10,
+ *       onExceeded: "delay",
+ *       window: "5 seconds",
+ *       algorithm: "fixed-window"
+ *     })
+ *   )
+ * })
+ * ```
+ *
+ * @since 1.0.0
+ * @category Accessors
+ */
+export const makeWithRateLimiter: Effect.Effect<
+  ((options: {
+    readonly algorithm?: "fixed-window" | "token-bucket" | undefined
+    readonly onExceeded?: "delay" | "fail" | undefined
+    readonly window: Duration.DurationInput
+    readonly limit: number
+    readonly key: string
+    readonly tokens?: number | undefined
+  }) => <A, E, R>(effect: Effect.Effect<A, E, R>) => Effect.Effect<A, E | RateLimiterError, R>),
+  never,
+  RateLimiter
+> = Effect.map(
+  RateLimiter,
+  (limiter) => (options) => (effect) =>
+    Effect.flatMap(limiter.consume(options), ({ delay }) => {
+      if (Duration.isZero(delay)) return effect
+      return Effect.delay(effect, delay)
+    })
+)
+
+/**
+ * Access a function that sleeps when the rate limit is exceeded.
+ *
+ * ```ts
+ * import { RateLimiter } from "@effect/experimental"
+ * import { Effect } from "effect"
+ *
+ * export default Effect.gen(function*() {
+ *   // Access the `sleep` function from the RateLimiter module
+ *   const sleep = yield* RateLimiter.makeSleep
+ *
+ *   // Use the `sleep` function with specific rate limiting parameters.
+ *   // This will only sleep if the rate limit has been exceeded.
+ *   yield* sleep({
+ *     key: "some-key",
+ *     limit: 10,
+ *     window: "5 seconds",
+ *     algorithm: "fixed-window"
+ *   })
+ * })
+ * ```
+ *
+ * @since 1.0.0
+ * @category Accessors
+ */
+export const makeSleep: Effect.Effect<
+  ((options: {
+    readonly algorithm?: "fixed-window" | "token-bucket" | undefined
+    readonly window: Duration.DurationInput
+    readonly limit: number
+    readonly key: string
+    readonly tokens?: number | undefined
+  }) => Effect.Effect<ConsumeResult, RateLimitStoreError>),
+  never,
+  RateLimiter
+> = Effect.map(
+  RateLimiter,
+  (limiter) => (options) =>
+    Effect.flatMap(
+      limiter.consume({
+        ...options,
+        onExceeded: "delay"
+      }) as Effect.Effect<ConsumeResult, RateLimitStoreError>,
+      (result) => {
+        if (Duration.isZero(result.delay)) return Effect.succeed(result)
+        return Effect.as(Effect.sleep(result.delay), result)
+      }
+    )
+)
 
 /**
  * @since 1.0.0

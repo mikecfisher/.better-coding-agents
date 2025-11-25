@@ -64,6 +64,10 @@ export class ShardingConfig extends Context.Tag("@effect/cluster/ShardingConfig"
    */
   readonly shardLockExpiration: DurationInput
   /**
+   * Disable the use of advisory locks for shard locking.
+   */
+  readonly shardLockDisableAdvisory: boolean
+  /**
    * Start shutting down as soon as an Entity has started shutting down.
    *
    * Defaults to `true`.
@@ -78,6 +82,13 @@ export class ShardingConfig extends Context.Tag("@effect/cluster/ShardingConfig"
    * after which an entity will be interrupted.
    */
   readonly entityMaxIdleTime: DurationInput
+  /**
+   * If an entity does not register itself within this time after a message is
+   * sent to it, the message will be marked as failed.
+   *
+   * Defaults to 1 minute.
+   */
+  readonly entityRegistrationTimeout: DurationInput
   /**
    * The maximum duration of time to wait for an entity to terminate.
    *
@@ -127,8 +138,10 @@ export const defaults: ShardingConfig["Type"] = {
   preemptiveShutdown: true,
   shardLockRefreshInterval: Duration.seconds(10),
   shardLockExpiration: Duration.seconds(35),
+  shardLockDisableAdvisory: false,
   entityMailboxCapacity: 4096,
   entityMaxIdleTime: Duration.minutes(1),
+  entityRegistrationTimeout: Duration.minutes(1),
   entityTerminationTimeout: Duration.seconds(15),
   entityMessagePollInterval: Duration.seconds(10),
   entityReplyPollInterval: Duration.millis(200),
@@ -198,6 +211,10 @@ export const config: Config.Config<ShardingConfig["Type"]> = Config.all({
     Config.withDefault(defaults.shardLockExpiration),
     Config.withDescription("Shard lock expiration duration.")
   ),
+  shardLockDisableAdvisory: Config.boolean("shardLockDisableAdvisory").pipe(
+    Config.withDefault(defaults.shardLockDisableAdvisory),
+    Config.withDescription("Disable the use of advisory locks for shard locking.")
+  ),
   entityMailboxCapacity: Config.integer("entityMailboxCapacity").pipe(
     Config.withDefault(defaults.entityMailboxCapacity),
     Config.withDescription("The default capacity of the mailbox for entities.")
@@ -206,6 +223,12 @@ export const config: Config.Config<ShardingConfig["Type"]> = Config.all({
     Config.withDefault(defaults.entityMaxIdleTime),
     Config.withDescription(
       "The maximum duration of inactivity (i.e. without receiving a message) after which an entity will be interrupted."
+    )
+  ),
+  entityRegistrationTimeout: Config.duration("entityRegistrationTimeout").pipe(
+    Config.withDefault(defaults.entityRegistrationTimeout),
+    Config.withDescription(
+      "If an entity does not register itself within this time after a message is sent to it, the message will be marked as failed."
     )
   ),
   entityTerminationTimeout: Config.duration("entityTerminationTimeout").pipe(

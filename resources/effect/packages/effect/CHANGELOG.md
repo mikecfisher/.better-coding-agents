@@ -1,5 +1,67 @@
 # effect
 
+## 3.19.6
+
+### Patch Changes
+
+- [#5778](https://github.com/Effect-TS/effect/pull/5778) [`af7916a`](https://github.com/Effect-TS/effect/commit/af7916a3f00acdfc8ce451eabd3f5fb02914d0bb) Thanks @tim-smart! - add RcRef.invalidate api
+
+## 3.19.5
+
+### Patch Changes
+
+- [#5772](https://github.com/Effect-TS/effect/pull/5772) [`079975c`](https://github.com/Effect-TS/effect/commit/079975c69d80c62461da5c51fe89e02c44dfa2ea) Thanks @tim-smart! - backport Effect.gen optimization
+
+## 3.19.4
+
+### Patch Changes
+
+- [#5752](https://github.com/Effect-TS/effect/pull/5752) [`f445b87`](https://github.com/Effect-TS/effect/commit/f445b87bab342188a5c223cfc76c697d65594d1d) Thanks @janglad! - Fix Types.DeepMutable mapping over functions
+
+- [#5757](https://github.com/Effect-TS/effect/pull/5757) [`d2b68ac`](https://github.com/Effect-TS/effect/commit/d2b68ac9e1ac1d58d7387715843c448195f14675) Thanks @tim-smart! - add experimental PartitionedSemaphore module
+
+  A `PartitionedSemaphore` is a concurrency primitive that can be used to
+  control concurrent access to a resource across multiple partitions identified
+  by keys.
+
+  The total number of permits is shared across all partitions, with waiting
+  permits equally distributed among partitions using a round-robin strategy.
+
+  This is useful when you want to limit the total number of concurrent accesses
+  to a resource, while still allowing for fair distribution of access across
+  different partitions.
+
+  ```ts
+  import { Effect, PartitionedSemaphore } from "effect"
+
+  Effect.gen(function* () {
+    const semaphore = yield* PartitionedSemaphore.make<string>({ permits: 5 })
+
+    // Take the first 5 permits with key "A", then the following permits will be
+    // equally distributed between all the keys using a round-robin strategy
+    yield* Effect.log("A").pipe(
+      Effect.delay(1000),
+      semaphore.withPermits("A", 1),
+      Effect.replicateEffect(15, { concurrency: "unbounded" }),
+      Effect.fork
+    )
+    yield* Effect.log("B").pipe(
+      Effect.delay(1000),
+      semaphore.withPermits("B", 1),
+      Effect.replicateEffect(10, { concurrency: "unbounded" }),
+      Effect.fork
+    )
+    yield* Effect.log("C").pipe(
+      Effect.delay(1000),
+      semaphore.withPermits("C", 1),
+      Effect.replicateEffect(10, { concurrency: "unbounded" }),
+      Effect.fork
+    )
+
+    return yield* Effect.never
+  }).pipe(Effect.runFork)
+  ```
+
 ## 3.19.3
 
 ### Patch Changes

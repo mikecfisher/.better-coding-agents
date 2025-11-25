@@ -1,5 +1,32 @@
 # @effect/workflow
 
+## 0.13.0
+
+### Minor Changes
+
+- [#5771](https://github.com/Effect-TS/effect/pull/5771) [`794c790`](https://github.com/Effect-TS/effect/commit/794c790d736f62784bff800fda5a656026d93749) Thanks @tim-smart! - add WorkflowEngine.makeUnsafe, which abstracts the serialization boundary
+
+### Patch Changes
+
+- [#5771](https://github.com/Effect-TS/effect/pull/5771) [`794c790`](https://github.com/Effect-TS/effect/commit/794c790d736f62784bff800fda5a656026d93749) Thanks @tim-smart! - add in-memory WorkflowEngine layer
+
+- Updated dependencies [[`794c790`](https://github.com/Effect-TS/effect/commit/794c790d736f62784bff800fda5a656026d93749), [`079975c`](https://github.com/Effect-TS/effect/commit/079975c69d80c62461da5c51fe89e02c44dfa2ea), [`62f7636`](https://github.com/Effect-TS/effect/commit/62f76361ee01ed816687774c5302e7f8c5ff6a42)]:
+  - @effect/rpc@0.72.2
+  - effect@3.19.5
+  - @effect/experimental@0.57.3
+
+## 0.12.5
+
+### Patch Changes
+
+- [#5744](https://github.com/Effect-TS/effect/pull/5744) [`7f3c781`](https://github.com/Effect-TS/effect/commit/7f3c781c11ceea5291d61adf107d0e098e5d1e07) Thanks @tim-smart! - remove auto-resumption of child workflows
+
+## 0.12.4
+
+### Patch Changes
+
+- [#5742](https://github.com/Effect-TS/effect/pull/5742) [`8c49696`](https://github.com/Effect-TS/effect/commit/8c49696f374dafa4fa628bec3957597f923a148d) Thanks @tim-smart! - don't try resume a child workflow if it has a defect
+
 ## 0.12.3
 
 ### Patch Changes
