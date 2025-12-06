@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { twMerge } from 'tailwind-merge'
-import { getFrameworkOptions, type Framework } from '~/libraries'
+import type { Framework } from '~/libraries'
+import { getFrameworkOptions } from '~/libraries/frameworks'
 
 type FrameworkIconTabsProps = {
   frameworks: Framework[]
@@ -17,14 +18,14 @@ export function FrameworkIconTabs({
 }: FrameworkIconTabsProps) {
   const options = React.useMemo(
     () => getFrameworkOptions(frameworks),
-    [frameworks]
+    [frameworks],
   )
 
   return (
     <div
       className={twMerge(
         `flex items-center justify-start gap-2 border-b border-gray-200 dark:border-gray-700 overflow-x-auto scrollbar-hide`,
-        className
+        className,
       )}
     >
       {options.map((opt) => (

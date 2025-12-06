@@ -1,22 +1,24 @@
-import { convexQuery } from '@convex-dev/react-query'
-import { useSuspenseQuery } from '@tanstack/react-query'
 import { redirect, createFileRoute } from '@tanstack/react-router'
-import { api } from 'convex/_generated/api'
+import { useCapabilities } from '~/hooks/useCapabilities'
+import { requireCapability } from '~/utils/auth.server'
 
 export const Route = createFileRoute('/builder')({
   component: RouteComponent,
-  loader: async (opts) => {
-    const user = await opts.context.ensureUser()
-    return { user }
+  beforeLoad: async () => {
+    // Call server function directly from beforeLoad (works in both SSR and client)
+    try {
+      const user = await requireCapability({ data: { capability: 'builder' } })
+      return { user }
+    } catch {
+      throw redirect({ to: '/login' })
+    }
   },
 })
 
 function RouteComponent() {
-  const currentUserQuery = useSuspenseQuery(
-    convexQuery(api.auth.getCurrentUser, {})
-  )
+  const capabilities = useCapabilities()
 
-  const canAccess = currentUserQuery.data?.capabilities.includes('builder')
+  const canAccess = capabilities.includes('builder')
 
   return (
     <div className="flex items-center justify-center h-screen">

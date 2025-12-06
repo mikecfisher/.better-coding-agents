@@ -13,8 +13,11 @@ import { StackBlitzEmbed } from '~/components/StackBlitzEmbed'
 import { FrameworkIconTabs } from '~/components/FrameworkIconTabs'
 import LandingPageGad from '~/components/LandingPageGad'
 import { PartnersSection } from '~/components/PartnersSection'
-import OpenSourceStats, { ossStatsQuery } from '~/components/OpenSourceStats'
+import OpenSourceStats from '~/components/OpenSourceStats'
+import { ossStatsQuery } from '~/queries/stats'
 import { CodeBlock } from '~/components/Markdown'
+import { AdGate } from '~/contexts/AdsContext'
+import { GamHeader } from '~/components/Gam'
 import { Link, createFileRoute } from '@tanstack/react-router'
 
 const library = getLibrary('form')
@@ -57,6 +60,9 @@ function FormVersionIndex() {
         <div className="w-fit mx-auto px-4">
           <OpenSourceStats library={library} />
         </div>
+        <AdGate>
+          <GamHeader />
+        </AdGate>
 
         <LibraryFeatureHighlights
           featureHighlights={library.featureHighlights}

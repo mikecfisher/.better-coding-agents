@@ -1,14 +1,24 @@
-import { Link, createFileRoute } from '@tanstack/react-router'
-import { FaLock, FaUsers, FaChartBar } from 'react-icons/fa'
-import { useQuery } from 'convex/react'
-import { api } from 'convex/_generated/api'
+import { Link, createFileRoute, redirect } from '@tanstack/react-router'
+import {
+  FaLock,
+  FaUsers,
+  FaRss,
+  FaShieldAlt,
+  FaGithub,
+  FaNpm,
+} from 'react-icons/fa'
+import { useCapabilities } from '~/hooks/useCapabilities'
+import { useCurrentUserQuery } from '~/hooks/useCurrentUser'
+import { requireCapability } from '~/utils/auth.server'
 
 export const Route = createFileRoute('/admin/')({
   component: AdminPage,
 })
 
 function AdminPage() {
-  const user = useQuery(api.auth.getCurrentUser)
+  const userQuery = useCurrentUserQuery()
+  const user = userQuery.data
+  const capabilities = useCapabilities()
 
   // If not authenticated, show loading
   if (user === undefined) {
@@ -20,7 +30,7 @@ function AdminPage() {
   }
 
   // If authenticated but no admin capability, show unauthorized
-  const canAdmin = user?.capabilities.includes('admin')
+  const canAdmin = capabilities.includes('admin')
   if (user && !canAdmin) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -45,7 +55,8 @@ function AdminPage() {
 }
 
 function AdminDashboard() {
-  const user = useQuery(api.auth.getCurrentUser)
+  const userQuery = useCurrentUserQuery()
+  const user = userQuery.data
 
   return (
     <div className="min-h-screen">
@@ -55,7 +66,11 @@ function AdminDashboard() {
             Admin Dashboard
           </h1>
           <p className="text-gray-600 dark:text-gray-400">
-            Welcome back, {user?.name}. Manage your TanStack platform from here.
+            Welcome back,{' '}
+            {user && typeof user === 'object' && 'name' in user
+              ? user.name
+              : 'Admin'}
+            . Manage your TanStack platform from here.
           </p>
         </div>
 
@@ -85,39 +100,93 @@ function AdminDashboard() {
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-gray-100 dark:bg-gray-700 rounded-lg">
-                  <FaLock className="text-gray-600 dark:text-gray-400 text-xl" />
+                <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
+                  <FaShieldAlt className="text-purple-600 dark:text-purple-400 text-xl" />
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  Coming Soon
+                  Role Management
                 </h3>
               </div>
             </div>
             <p className="text-gray-600 dark:text-gray-400 mb-4">
-              Additional admin features will be added here.
+              Create and manage roles, assign capabilities to roles, and view
+              users by role.
             </p>
-            <div className="inline-flex items-center px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-600 dark:text-gray-400 rounded-lg cursor-not-allowed">
-              Coming Soon
-            </div>
+            <Link
+              to="/admin/roles"
+              className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+            >
+              Manage Roles
+            </Link>
           </div>
 
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-gray-100 dark:bg-gray-700 rounded-lg">
-                  <FaChartBar className="text-gray-600 dark:text-gray-400 text-xl" />
+                <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
+                  <FaRss className="text-green-600 dark:text-green-400 text-xl" />
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  Analytics
+                  Feed Management
                 </h3>
               </div>
             </div>
             <p className="text-gray-600 dark:text-gray-400 mb-4">
-              View platform statistics and analytics (coming soon).
+              Manage feed entries, sync GitHub releases and blog posts, and
+              create manual announcements.
             </p>
-            <div className="inline-flex items-center px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-600 dark:text-gray-400 rounded-lg cursor-not-allowed">
-              Coming Soon
+            <Link
+              to="/admin/feed"
+              className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+            >
+              Manage Feed
+            </Link>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-gray-100 dark:bg-gray-900/30 rounded-lg">
+                  <FaGithub className="text-gray-900 dark:text-gray-100 text-xl" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  GitHub Stats
+                </h3>
+              </div>
             </div>
+            <p className="text-gray-600 dark:text-gray-400 mb-4">
+              View and refresh cached GitHub statistics for repositories and
+              organizations.
+            </p>
+            <Link
+              to="/admin/github-stats"
+              className="inline-flex items-center px-4 py-2 bg-gray-900 dark:bg-gray-700 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-600 transition-colors"
+            >
+              Manage GitHub Stats
+            </Link>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-red-100 dark:bg-red-900/30 rounded-lg">
+                  <FaNpm className="text-red-600 dark:text-red-400 text-xl" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  NPM Stats
+                </h3>
+              </div>
+            </div>
+            <p className="text-gray-600 dark:text-gray-400 mb-4">
+              View and refresh cached NPM package statistics and org-level
+              aggregates.
+            </p>
+            <Link
+              to="/admin/npm-stats"
+              className="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+            >
+              Manage NPM Stats
+            </Link>
           </div>
         </div>
 

@@ -14,7 +14,10 @@ import { Framework, getBranch, getLibrary } from '~/libraries'
 import { seo } from '~/utils/seo'
 import { LibraryFeatureHighlights } from '~/components/LibraryFeatureHighlights'
 import LandingPageGad from '~/components/LandingPageGad'
-import OpenSourceStats, { ossStatsQuery } from '~/components/OpenSourceStats'
+import OpenSourceStats from '~/components/OpenSourceStats'
+import { ossStatsQuery } from '~/queries/stats'
+import { AdGate } from '~/contexts/AdsContext'
+import { GamHeader } from '~/components/Gam'
 
 const library = getLibrary('router')
 
@@ -54,6 +57,9 @@ function RouterVersionIndex() {
       <div className="w-fit mx-auto px-4">
         <OpenSourceStats library={library} />
       </div>
+      <AdGate>
+        <GamHeader />
+      </AdGate>
 
       {/* Minimal code example card */}
       <div className="px-4 space-y-4 flex flex-col items-center ">

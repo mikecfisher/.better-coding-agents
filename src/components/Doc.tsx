@@ -1,6 +1,3 @@
-import { marked } from 'marked'
-import markedAlert from 'marked-alert'
-import { getHeadingList, gfmHeadingId } from 'marked-gfm-heading-id'
 import * as React from 'react'
 import {
   BsArrowsCollapseVertical,
@@ -11,9 +8,13 @@ import { twMerge } from 'tailwind-merge'
 import { useWidthToggle } from '~/components/DocsLayout'
 import { DocTitle } from '~/components/DocTitle'
 import { Markdown } from '~/components/Markdown'
+import {
+  MarkdownHeadingProvider,
+  useMarkdownHeadings,
+} from '~/components/MarkdownHeadingContext'
 import { AdGate } from '~/contexts/AdsContext'
 import { CopyMarkdownButton } from './CopyMarkdownButton'
-import { GamLeader } from './Gam'
+import { GamHeader, GamLeader } from './Gam'
 import { Toc } from './Toc'
 import { TocMobile } from './TocMobile'
 
@@ -28,7 +29,7 @@ type DocProps = {
   colorTo?: string
 }
 
-export function Doc({
+function DocContent({
   title,
   content,
   repo,
@@ -38,17 +39,7 @@ export function Doc({
   colorFrom,
   colorTo,
 }: DocProps) {
-  const { markup, headings } = React.useMemo(() => {
-    const markup = marked.use(
-      { gfm: true },
-      gfmHeadingId(),
-      markedAlert()
-    )(content) as string
-
-    const headings = getHeadingList()
-
-    return { markup, headings }
-  }, [content])
+  const { headings } = useMarkdownHeadings()
 
   const isTocVisible = shouldRenderToc && headings && headings.length > 1
 
@@ -78,7 +69,7 @@ export function Doc({
           map[headingElement.target.id] = headingElement
           return map
         },
-        headingElementRefs.current
+        headingElementRefs.current,
       )
 
       const visibleHeadings: Array<IntersectionObserverEntry> = []
@@ -101,33 +92,35 @@ export function Doc({
 
     const headingElements = Array.from(
       markdownContainerRef.current?.querySelectorAll(
-        'h2[id], h3[id], h4[id], h5[id], h6[id]'
-      ) ?? []
+        'h2[id], h3[id], h4[id], h5[id], h6[id]',
+      ) ?? [],
     )
     headingElements.forEach((el) => observer.observe(el))
 
     return () => observer.disconnect()
-  }, [])
+  }, [headings])
 
   return (
-    <React.Fragment>
+    <div className="flex-1 min-h-0 flex flex-col">
       {shouldRenderToc ? <TocMobile headings={headings} /> : null}
+      <AdGate>
+        <div className="mb-2 xl:mb-4 max-w-full">
+          <GamHeader />
+        </div>
+      </AdGate>
       <div
         className={twMerge(
           'w-full flex bg-white/70 dark:bg-black/40 mx-auto rounded-xl max-w-[936px]',
           isTocVisible && 'max-w-full',
-          shouldRenderToc && 'lg:pt-0'
+          shouldRenderToc && 'lg:pt-0',
         )}
       >
         <div
           className={twMerge(
             'flex overflow-auto flex-col w-full p-2 lg:p-4 xl:p-6',
-            isTocVisible && 'pr-0!'
+            isTocVisible && 'pr-0!',
           )}
         >
-          <AdGate>
-            <GamLeader />
-          </AdGate>
           {title ? (
             <div className="flex items-center justify-between gap-4 pr-2 lg:pr-4">
               <DocTitle>{title}</DocTitle>
@@ -163,10 +156,10 @@ export function Doc({
               'prose prose-gray dark:prose-invert max-w-none',
               '[font-size:14px]',
               isTocVisible && 'pr-2 lg:pr-4 xl:pr-6',
-              'styled-markdown-content'
+              'styled-markdown-content',
             )}
           >
-            <Markdown htmlMarkup={markup} />
+            <Markdown rawContent={content} />
           </div>
           <div className="h-12" />
           <div className="w-full h-px bg-gray-500 opacity-30" />
@@ -192,6 +185,14 @@ export function Doc({
           </div>
         )}
       </div>
-    </React.Fragment>
+    </div>
+  )
+}
+
+export function Doc(props: DocProps) {
+  return (
+    <MarkdownHeadingProvider>
+      <DocContent {...props} />
+    </MarkdownHeadingProvider>
   )
 }

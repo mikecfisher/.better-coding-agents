@@ -10,12 +10,12 @@ import parse, {
   Element,
   HTMLReactParserOptions,
 } from 'html-react-parser'
-import { marked } from 'marked'
-import { gfmHeadingId } from 'marked-gfm-heading-id'
-import markedAlert from 'marked-alert'
 import mermaid from 'mermaid'
 import { useToast } from '~/components/ToastProvider'
 import { twMerge } from 'tailwind-merge'
+import { useMarkdownHeadings } from '~/components/MarkdownHeadingContext'
+import { renderMarkdown } from '~/utils/markdown'
+import { Tabs } from '~/components/Tabs'
 
 const CustomHeading = ({
   Comp,
@@ -39,14 +39,13 @@ const CustomHeading = ({
 
 const makeHeading =
   (type: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6') =>
-  (props: HTMLProps<HTMLHeadingElement>) =>
-    (
-      <CustomHeading
-        Comp={type}
-        {...props}
-        className={`${props.className ?? ''} block`}
-      />
-    )
+  (props: HTMLProps<HTMLHeadingElement>) => (
+    <CustomHeading
+      Comp={type}
+      {...props}
+      className={`${props.className ?? ''} block`}
+    />
+  )
 
 const markdownComponents: Record<string, React.FC> = {
   a: MarkdownLink,
@@ -144,7 +143,7 @@ export function CodeBlock({
       <pre className={`shiki tokyo-night`}>
         <code>{lang === 'mermaid' ? <svg /> : code}</code>
       </pre>
-    </>
+    </>,
   )
 
   React[
@@ -175,18 +174,18 @@ export function CodeBlock({
           }
 
           return output
-        })
+        }),
       )
 
       setCodeElement(
         <div
           // className={`m-0 text-sm rounded-md w-full border border-gray-500/20 dark:border-gray-500/30`}
           className={twMerge(
-            isEmbedded ? 'h-full [&>pre]:h-full [&>pre]:rounded-none' : ''
+            isEmbedded ? 'h-full [&>pre]:h-full [&>pre]:rounded-none' : '',
           )}
           dangerouslySetInnerHTML={{ __html: htmls.join('') }}
           ref={ref}
-        />
+        />,
       )
     })()
   }, [code, lang])
@@ -194,8 +193,8 @@ export function CodeBlock({
   return (
     <div
       className={twMerge(
-        'w-full max-w-full relative not-prose border border-gray-500/20 rounded-md [&_pre]:rounded-md',
-        props.className
+        'codeblock w-full max-w-full relative not-prose border border-gray-500/20 rounded-md [&_pre]:rounded-md [*[data-tab]_&]:only:border-0',
+        props.className,
       )}
       style={props.style}
     >
@@ -205,7 +204,7 @@ export function CodeBlock({
             `absolute flex items-stretch bg-white text-sm z-10 rounded-md`,
             `dark:bg-gray-800 overflow-hidden divide-x divide-gray-500/20`,
             'shadow-md',
-            isEmbedded ? 'top-2 right-4' : '-top-3 right-2'
+            isEmbedded ? 'top-2 right-4' : '-top-3 right-2',
           )}
         >
           {lang ? <div className="px-2">{lang}</div> : null}
@@ -230,7 +229,7 @@ export function CodeBlock({
                   <div className="text-gray-500 dark:text-gray-400 text-xs">
                     Code block copied to clipboard
                   </div>
-                </div>
+                </div>,
               )
             }}
             aria-label="Copy code to clipboard"
@@ -269,8 +268,8 @@ const getHighlighter = cache(async (language: string, themes: string[]) => {
   if (!loadedLanguages.includes(language as any)) {
     promises.push(
       highlighter.loadLanguage(
-        language === 'mermaid' ? 'plaintext' : (language as any)
-      )
+        language === 'mermaid' ? 'plaintext' : (language as any),
+      ),
     )
   }
 
@@ -288,12 +287,41 @@ const getHighlighter = cache(async (language: string, themes: string[]) => {
 const options: HTMLReactParserOptions = {
   replace: (domNode) => {
     if (domNode instanceof Element && domNode.attribs) {
+      if (domNode.name === 'md-comment-component') {
+        const componentName = domNode.attribs['data-component']
+        const rawAttributes = domNode.attribs['data-attributes']
+        const attributes: Record<string, any> = {}
+        try {
+          Object.assign(attributes, JSON.parse(rawAttributes))
+        } catch {
+          // ignore JSON parse errors and fall back to empty props
+        }
+
+        switch (componentName?.toLowerCase()) {
+          case 'tabs': {
+            const tabs = attributes.tabs
+            const panelElements = domNode.children?.filter(
+              (child): child is Element =>
+                child instanceof Element && child.name === 'md-tab-panel',
+            )
+
+            const children = panelElements?.map((panel) =>
+              domToReact(panel.children as any, options),
+            )
+
+            return <Tabs tabs={tabs} children={children as any} />
+          }
+          default:
+            return <div>{domToReact(domNode.children as any, options)}</div>
+        }
+      }
+
       const replacer = markdownComponents[domNode.name]
       if (replacer) {
         return React.createElement(
           replacer,
           attributesToProps(domNode.attribs),
-          domToReact(domNode.children as any, options)
+          domToReact(domNode.children as any, options),
         )
       }
     }
@@ -302,24 +330,35 @@ const options: HTMLReactParserOptions = {
   },
 }
 
-type MarkdownProps = { rawContent?: string; htmlMarkup?: string }
+type MarkdownProps = {
+  rawContent?: string
+  htmlMarkup?: string
+}
 
 export function Markdown({ rawContent, htmlMarkup }: MarkdownProps) {
-  return React.useMemo(() => {
-    if (rawContent) {
-      const markup = marked.use(
-        { gfm: true },
-        gfmHeadingId(),
-        markedAlert()
-      )(rawContent) as string
+  const { setHeadings } = useMarkdownHeadings()
 
-      return parse(markup, options)
+  const rendered = React.useMemo(() => {
+    if (rawContent) {
+      return renderMarkdown(rawContent)
     }
 
     if (htmlMarkup) {
-      return parse(htmlMarkup, options)
+      return { markup: htmlMarkup, headings: [] }
     }
 
-    return null
+    return { markup: '', headings: [] }
   }, [rawContent, htmlMarkup])
+
+  React.useEffect(() => {
+    setHeadings(rendered.headings)
+  }, [rendered.headings, setHeadings])
+
+  return React.useMemo(() => {
+    if (!rendered.markup) {
+      return null
+    }
+
+    return parse(rendered.markup, options)
+  }, [rendered.markup])
 }

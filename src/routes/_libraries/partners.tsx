@@ -13,6 +13,7 @@ import { queryProject } from '~/libraries/query'
 import { tableProject } from '~/libraries/table'
 import { configProject } from '~/libraries/config'
 import { dbProject } from '~/libraries/db'
+import { aiProject } from '~/libraries/ai'
 import { formProject } from '~/libraries/form'
 import { pacerProject } from '~/libraries/pacer'
 import { rangerProject } from '~/libraries/ranger'
@@ -30,6 +31,7 @@ const availableLibraries = [
   storeProject,
   pacerProject,
   dbProject,
+  aiProject,
   configProject,
 ]
 
@@ -44,6 +46,7 @@ const librarySchema = z.enum([
   'store',
   'pacer',
   'db',
+  'ai',
   'config',
   'react-charts',
   'devtools',
@@ -168,7 +171,7 @@ function PartnersFilter({
                       onClick={() => {
                         // Toggle: if currently inactive, turn off filter, otherwise set to inactive
                         onStatusChange(
-                          selectedStatus === 'active' ? undefined : 'active'
+                          selectedStatus === 'active' ? undefined : 'active',
                         )
                       }}
                       className={`px-3 py-2 rounded-md text-sm transition-colors ${
@@ -183,7 +186,9 @@ function PartnersFilter({
                       onClick={() => {
                         // Toggle: if currently inactive, turn off filter, otherwise set to inactive
                         onStatusChange(
-                          selectedStatus === 'inactive' ? undefined : 'inactive'
+                          selectedStatus === 'inactive'
+                            ? undefined
+                            : 'inactive',
                         )
                       }}
                       className={`px-3 py-2 rounded-md text-sm transition-colors ${
@@ -236,7 +241,7 @@ function PartnersFilter({
             {/* Library chips */}
             {selectedLibraries?.map((libraryId) => {
               const library = availableLibraries.find(
-                (lib) => lib.id === libraryId
+                (lib) => lib.id === libraryId,
               )
               return (
                 <span
@@ -288,7 +293,7 @@ function RouteComp() {
     if (search.libraries && search.libraries.length > 0) {
       // Include partners that match any of the selected libraries
       return partner.libraries?.some((lib) =>
-        search.libraries!.includes(lib as Library['id'])
+        search.libraries!.includes(lib as Library['id']),
       )
     }
 
@@ -309,15 +314,15 @@ function RouteComp() {
             {isShowingPrevious
               ? 'Previous Partners'
               : isShowingActive
-              ? 'Current Partners'
-              : 'Partners'}
+                ? 'Current Partners'
+                : 'Partners'}
           </h1>
           <p className="text-lg mt-4 text-gray-700 dark:text-gray-300">
             {isShowingPrevious
               ? 'Companies and organizations that have supported TanStack in the past'
               : isShowingActive
-              ? 'Companies and organizations currently supporting TanStack and our open source mission'
-              : 'Companies and organizations supporting TanStack and our open source mission'}
+                ? 'Companies and organizations currently supporting TanStack and our open source mission'
+                : 'Companies and organizations supporting TanStack and our open source mission'}
           </p>
         </header>
 

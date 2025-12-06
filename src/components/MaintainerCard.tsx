@@ -1,4 +1,5 @@
-import { Library, Framework, frameworkOptions } from '~/libraries'
+import { Library, Framework } from '~/libraries'
+import { frameworkOptions } from '~/libraries/frameworks'
 import {
   getRoleInLibrary,
   Maintainer,
@@ -93,7 +94,7 @@ function LibraryBadge({ library }: { library: Library }) {
         href={`${library.to}/latest/docs/contributors`}
         className={twMerge(
           `inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold text-green-900 dark:text-green-200 capitalize hover:underline focus:outline-none focus:ring-2 focus:ring-blue-400 transition-colors`,
-          bgClass
+          bgClass,
         )}
         aria-label={`View contributors for ${library.name}`}
         tabIndex={0}
@@ -108,7 +109,7 @@ function LibraryBadge({ library }: { library: Library }) {
     <span
       className={twMerge(
         `inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold text-green-900 dark:text-green-200 capitalize`,
-        bgClass
+        bgClass,
       )}
       aria-label={`View contributors for ${library.name}`}
       title={`View all contributors for ${library.name}`}
@@ -419,7 +420,11 @@ export function MaintainerRowCard({
   )
 }
 
-export function MaintainerCard({ maintainer, libraryId, hideLibraries }: MaintainerCardProps) {
+export function MaintainerCard({
+  maintainer,
+  libraryId,
+  hideLibraries,
+}: MaintainerCardProps) {
   const libraries = getPersonsMaintainerOf(maintainer)
   const [showAllLibraries, setShowAllLibraries] = useState(false)
 

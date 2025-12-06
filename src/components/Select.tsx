@@ -8,13 +8,8 @@ import { Link, useNavigate } from '@tanstack/react-router'
 import { notFound, Outlet, useParams } from '@tanstack/react-router'
 import { create } from 'zustand'
 import { Scarf } from '~/components/Scarf'
-import {
-  findLibrary,
-  Framework,
-  getFrameworkOptions,
-  getLibrary,
-  LibraryId,
-} from '~/libraries'
+import { findLibrary, Framework, getLibrary, LibraryId } from '~/libraries'
+import { getFrameworkOptions } from '~/libraries/frameworks'
 import { seo } from '~/utils/seo'
 
 export type SelectOption = {

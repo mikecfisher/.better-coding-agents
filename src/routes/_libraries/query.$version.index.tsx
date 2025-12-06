@@ -14,8 +14,11 @@ import { Framework, getBranch, getLibrary } from '~/libraries'
 import { seo } from '~/utils/seo'
 import { LibraryFeatureHighlights } from '~/components/LibraryFeatureHighlights'
 import LandingPageGad from '~/components/LandingPageGad'
-import OpenSourceStats, { ossStatsQuery } from '~/components/OpenSourceStats'
+import OpenSourceStats from '~/components/OpenSourceStats'
+import { ossStatsQuery } from '~/queries/stats'
 import { CodeBlock } from '~/components/Markdown'
+import { AdGate } from '~/contexts/AdsContext'
+import { GamHeader } from '~/components/Gam'
 import { FrameworkIconTabs } from '~/components/FrameworkIconTabs'
 import { Link, createFileRoute } from '@tanstack/react-router'
 import { twMerge } from 'tailwind-merge'
@@ -64,6 +67,9 @@ function VersionIndex() {
           <div className="w-fit mx-auto px-4">
             <OpenSourceStats library={library} />
           </div>
+          <AdGate>
+            <GamHeader />
+          </AdGate>
           {/* Minimal code example card */}
           <div className="px-4 space-y-4 flex flex-col items-center ">
             <div className="text-3xl font-black">Just a quick look...</div>
@@ -71,7 +77,7 @@ function VersionIndex() {
               className={twMerge(
                 `group bg-white/60 dark:bg-black/40 rounded-lg overflow-hidden shadow-xl
             max-w-full mx-auto
-            [&_pre]:bg-transparent! [&_pre]:p-4!`
+            [&_pre]:bg-transparent! [&_pre]:p-4!`,
               )}
             >
               <div>
