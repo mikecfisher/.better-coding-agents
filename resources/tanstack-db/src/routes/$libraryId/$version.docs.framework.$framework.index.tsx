@@ -2,19 +2,15 @@ import { seo } from '~/utils/seo'
 import { redirect, createFileRoute } from '@tanstack/react-router'
 import { Doc } from '~/components/Doc'
 import { loadDocs } from '~/utils/docs'
-import {
-  Framework,
-  getBranch,
-  getFrameworkOptions,
-  getLibrary,
-} from '~/libraries'
+import { Framework, getBranch, getLibrary } from '~/libraries'
+import { getFrameworkOptions } from '~/libraries/frameworks'
 import { capitalize } from '~/utils/utils'
 import { DocContainer } from '~/components/DocContainer'
 import { DocTitle } from '~/components/DocTitle'
 import { twMerge } from 'tailwind-merge'
 
 export const Route = createFileRoute(
-  '/$libraryId/$version/docs/framework/$framework/'
+  '/$libraryId/$version/docs/framework/$framework/',
 )({
   staleTime: 1000 * 60 * 5,
   loader: (ctx) => {
@@ -51,7 +47,7 @@ function Comp() {
     <DocContainer>
       <div
         className={twMerge(
-          'w-full flex bg-white/70 dark:bg-black/40 mx-auto rounded-xl max-w-[936px]'
+          'w-full flex bg-white/70 dark:bg-black/40 mx-auto rounded-xl max-w-[936px]',
         )}
       >
         <div
@@ -67,7 +63,7 @@ function Comp() {
           <div
             className={twMerge(
               'prose prose-gray prose-sm prose-p:leading-7 dark:prose-invert max-w-none',
-              'styled-markdown-content'
+              'styled-markdown-content',
             )}
           >
             Use the menu to select a documentation page.

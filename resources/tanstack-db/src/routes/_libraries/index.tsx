@@ -1,6 +1,4 @@
 import { Link, MatchRoute, createFileRoute } from '@tanstack/react-router'
-import { convexQuery } from '@convex-dev/react-query'
-import { api } from 'convex/_generated/api'
 import { twMerge } from 'tailwind-merge'
 // import { CgSpinner } from 'react-icons/cg'
 import { Footer } from '~/components/Footer'
@@ -8,10 +6,11 @@ import { Footer } from '~/components/Footer'
 import { LazySponsorSection } from '~/components/LazySponsorSection'
 import discordImage from '~/images/discord-logo-white.svg'
 import { useMutation } from '~/hooks/useMutation'
-import { librariesByGroup, librariesGroupNamesMap, Library } from '~/libraries'
+import { librariesByGroup, librariesGroupNamesMap } from '~/libraries'
 import bytesImage from '~/images/bytes.svg'
 import { PartnersGrid } from '~/components/PartnersGrid'
 import OpenSourceStats from '~/components/OpenSourceStats'
+import { ossStatsQuery } from '~/queries/stats'
 // Using public asset URLs for splash images
 import { BrandContextMenu } from '~/components/BrandContextMenu'
 import LandingPageGad from '~/components/LandingPageGad'
@@ -24,6 +23,8 @@ import { format } from 'date-fns'
 import { Markdown } from '~/components/Markdown'
 import { createServerFn } from '@tanstack/react-start'
 import { setResponseHeaders } from '@tanstack/react-start/server'
+import { AdGate } from '~/contexts/AdsContext'
+import { GamHeader } from '~/components/Gam'
 
 export const textColors = [
   `text-rose-500`,
@@ -54,7 +55,7 @@ const fetchRecentPosts = createServerFn({ method: 'GET' }).handler(async () => {
       'cache-control': 'public, max-age=0, must-revalidate',
       'cdn-cache-control': 'max-age=300, stale-while-revalidate=300, durable',
       'Netlify-Vary': 'query=payload',
-    })
+    }),
   )
 
   return allPosts
@@ -75,7 +76,7 @@ const fetchRecentPosts = createServerFn({ method: 'GET' }).handler(async () => {
 
 export const Route = createFileRoute('/_libraries/')({
   loader: async ({ context: { queryClient } }) => {
-    await queryClient.ensureQueryData(convexQuery(api.stats.getStats, {}))
+    await queryClient.ensureQueryData(ossStatsQuery())
     const recentPosts = await fetchRecentPosts()
 
     return {
@@ -177,6 +178,10 @@ function Index() {
             <OpenSourceStats />
           </div>
         </div>
+        <AdGate>
+          <GamHeader />
+        </AdGate>
+
         <div className="px-4 lg:max-w-(--breakpoint-lg) md:mx-auto">
           <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
             <h3 id="libraries" className={`text-4xl font-light scroll-mt-24`}>
@@ -196,7 +201,7 @@ function Index() {
           </div>
 
           {Object.entries(librariesByGroup).map(
-            ([groupName, groupLibraries]: [string, Library[]]) => (
+            ([groupName, groupLibraries]) => (
               <div key={groupName} className="mt-8">
                 <h4 className={`text-2xl font-medium capitalize mb-6`}>
                   {
@@ -222,7 +227,7 @@ function Index() {
                           'hover:shadow-2xl hover:shadow-current/20 hover:border-current/50 hover:-translate-y-1',
                           'relative group',
                           'min-h-[250px] xl:min-h-[220px]',
-                          library.cardStyles
+                          library.cardStyles,
                         )}
                         style={{
                           zIndex: i,
@@ -235,11 +240,11 @@ function Index() {
                             <MatchRoute
                               pending
                               to={library.to}
-                              children={(isPending) => {
+                              children={() => {
                                 return (
                                   <div
                                     className={twMerge(
-                                      `flex items-center gap-2 text-[1.2rem] font-extrabold uppercase [letter-spacing:-.04em]`
+                                      `flex items-center gap-2 text-[1.2rem] font-extrabold uppercase [letter-spacing:-.04em]`,
                                     )}
                                     style={{
                                       viewTransitionName: `library-name-${library.id}`,
@@ -316,7 +321,7 @@ function Index() {
                                   library.colorFrom,
                                   library.colorTo,
                                 ],
-                                'uppercase text-white font-black italic text-xs'
+                                'uppercase text-white font-black italic text-xs',
                               )}
                               style={{
                                 animation: 'pulseScale 3s infinite',
@@ -334,7 +339,7 @@ function Index() {
                   })}
                 </div>
               </div>
-            )
+            ),
           )}
         </div>
 
@@ -418,7 +423,7 @@ function Index() {
                                 dateTime={published}
                                 title={format(
                                   new Date(published),
-                                  'MMM dd, yyyy'
+                                  'MMM dd, yyyy',
                                 )}
                               >
                                 {' '}
@@ -442,7 +447,7 @@ function Index() {
                       </div>
                     </Link>
                   )
-                }
+                },
               )}
             </div>
             <div className="text-center mt-6">
@@ -621,7 +626,7 @@ function Index() {
                         <div className="text-gray-500 dark:text-gray-400 text-xs">
                           Check your email to confirm your subscription
                         </div>
-                      </div>
+                      </div>,
                     )
                   } else if (bytesSignupMutation.status === 'error') {
                     notify(
@@ -630,7 +635,7 @@ function Index() {
                         <div className="text-gray-500 dark:text-gray-400 text-xs">
                           Please try again in a moment
                         </div>
-                      </div>
+                      </div>,
                     )
                   }
                 }}

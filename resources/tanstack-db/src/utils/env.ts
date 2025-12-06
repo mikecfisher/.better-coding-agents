@@ -3,22 +3,17 @@ import { z } from 'zod'
 // Define server-only schema
 const serverEnvSchema = z.object({
   GITHUB_AUTH_TOKEN: z.string().default('USE_A_REAL_KEY_IN_PRODUCTION'),
-  AIRTABLE_API_KEY: z.string().optional(),
+  GITHUB_WEBHOOK_SECRET: z.string().optional(),
   GITHUB_OAUTH_CLIENT_ID: z.string().optional(),
   GITHUB_OAUTH_CLIENT_SECRET: z.string().optional(),
   GOOGLE_OAUTH_CLIENT_ID: z.string().optional(),
   GOOGLE_OAUTH_CLIENT_SECRET: z.string().optional(),
+  SITE_URL: z.string().optional(), // Base URL for OAuth redirects (e.g., https://tanstack.com or http://localhost:3000)
+  DATABASE_URL: z.string().optional(),
+  SESSION_SECRET: z.string().optional(), // Secret key for signing session cookies (required in production)
 })
 
 const clientEnvSchema = z.object({
-  VITE_CONVEX_SITE_URL: z
-    .string()
-    .optional()
-    .default('http://upbeat-greyhound-631.convex.site'),
-  VITE_CONVEX_URL: z
-    .string()
-    .optional()
-    .default('http://upbeat-greyhound-631.convex.cloud'),
   URL: z.string().optional(),
 })
 
@@ -45,13 +40,13 @@ export const env = new Proxy(
       if (prop in parsedServerEnv && typeof window !== 'undefined') {
         throw new Error(
           `Access to server-only environment variable '${String(
-            prop
-          )}' from client code is not allowed.`
+            prop,
+          )}' from client code is not allowed.`,
         )
       }
       return prop in parsedServerEnv
         ? parsedServerEnv[prop as keyof typeof parsedServerEnv]
         : target[prop as keyof typeof parsedClientEnv]
     },
-  }
+  },
 ) as ParsedEnv

@@ -1,5 +1,5 @@
 import { FaGithub, FaBolt, FaCogs } from 'react-icons/fa'
-import { Library } from '.'
+import type { Library } from './types'
 import { BiBookAlt } from 'react-icons/bi'
 import { VscWand } from 'react-icons/vsc'
 import { twMerge } from 'tailwind-merge'
@@ -89,4 +89,4 @@ export const devtoolsProject = {
       ),
     },
   ],
-} satisfies Library
+}

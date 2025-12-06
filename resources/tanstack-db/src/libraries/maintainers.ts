@@ -1,4 +1,5 @@
-import { Framework, getLibrary, Library } from '.'
+import type { Framework, Library } from './types'
+import { getLibrary } from './index'
 
 export interface Maintainer {
   name: string
@@ -113,7 +114,7 @@ export const allMaintainers: Maintainer[] = [
     isCoreMaintainer: true,
     avatar: 'https://github.com/jherr.png',
     github: 'jherr',
-    creatorOf: ['create-tsrouter-app'],
+    creatorOf: ['ai', 'create-tsrouter-app'],
     frameworkExpertise: ['react'],
     specialties: ['Templates'],
     workshopsAvailable: true,
@@ -167,7 +168,7 @@ export const allMaintainers: Maintainer[] = [
     name: 'Alem Tuzlak',
     avatar: 'https://github.com/AlemTuzlak.png',
     github: 'AlemTuzlak',
-    creatorOf: ['devtools'],
+    creatorOf: ['ai', 'devtools'],
     contributorOf: ['pacer', 'form'],
     frameworkExpertise: ['react'],
     specialties: ['DevTools', 'Routers', 'Vite Plugins'],
@@ -270,6 +271,31 @@ export const allMaintainers: Maintainer[] = [
       twitter: 'https://x.com/manudeli_',
       bluesky: 'https://bsky.app/profile/manudeli.bsky.social',
       website: 'https://www.linkedin.com/in/jonghyeonko',
+    },
+  },
+  {
+    name: 'Sarah Gerrard',
+    avatar: 'https://github.com/ladybluenotes.png',
+    github: 'ladybluenotes',
+    contributorOf: [
+      'ai',
+      'config',
+      'db',
+      'devtools',
+      'form',
+      'pacer',
+      'query',
+      'ranger',
+      'router',
+      'start',
+      'store',
+      'table',
+      'virtual',
+    ],
+    frameworkExpertise: ['react', 'solid'],
+    specialties: ['Documentation'],
+    social: {
+      bluesky: 'https://bsky.app/profile/ladybluenotes.dev',
     },
   },
   {
@@ -439,22 +465,22 @@ export const allMaintainers: Maintainer[] = [
 ]
 
 export const coreMaintainers = allMaintainers.filter(
-  (maintainer) => maintainer.isCoreMaintainer
+  (maintainer) => maintainer.isCoreMaintainer,
 )
 
 export function getLibraryCreators(libraryId: string): Maintainer[] {
   return allMaintainers.filter((maintainer) =>
-    maintainer.creatorOf?.includes(libraryId as Library['id'])
+    maintainer.creatorOf?.includes(libraryId as Library['id']),
   )
 }
 
 export function getLibraryMaintainers(
   libraryId: string,
-  includeCreators = true
+  includeCreators = true,
 ): Maintainer[] {
   const creators = getLibraryCreators(libraryId)
   const maintainers = allMaintainers.filter((maintainer) =>
-    maintainer.maintainerOf?.includes(libraryId as Library['id'])
+    maintainer.maintainerOf?.includes(libraryId as Library['id']),
   )
 
   // Use Set to dedupe while preserving order
@@ -465,30 +491,16 @@ export function getLibraryMaintainers(
 
 export function getLibraryContributors(
   libraryId: string,
-  includeMaintainers = true
+  includeMaintainers = true,
 ): Maintainer[] {
   const maintainers = getLibraryMaintainers(libraryId)
   const contributors = allMaintainers.filter((maintainer) =>
-    maintainer.contributorOf?.includes(libraryId as Library['id'])
+    maintainer.contributorOf?.includes(libraryId as Library['id']),
   )
 
   return includeMaintainers
     ? [...new Set([...maintainers, ...contributors])]
     : contributors
-}
-
-export function getLibraryConsultants(
-  libraryId: string,
-  includeMaintainers = true
-): Maintainer[] {
-  const maintainers = getLibraryMaintainers(libraryId)
-  const consultants = allMaintainers.filter((maintainer) =>
-    maintainer.consultantOf?.includes(libraryId as Library['id'])
-  )
-
-  return includeMaintainers
-    ? [...new Set([...maintainers, ...consultants])]
-    : consultants
 }
 
 export function getPersonsCreatorOf(person: Maintainer): Library[] {
@@ -497,7 +509,7 @@ export function getPersonsCreatorOf(person: Maintainer): Library[] {
 
 export function getPersonsMaintainerOf(
   person: Maintainer,
-  includeCreatorOf = true
+  includeCreatorOf = true,
 ): Library[] {
   const creatorOf = getPersonsCreatorOf(person)
   const maintainerOf =
@@ -508,53 +520,27 @@ export function getPersonsMaintainerOf(
     : maintainerOf
 }
 
-export function getPersonsContributorOf(
-  person: Maintainer,
-  includeMaintainers = true
-): Library[] {
-  const maintainers = getPersonsMaintainerOf(person)
-  const contributors =
-    person.contributorOf?.map((libraryId) => getLibrary(libraryId)) || []
-
-  return includeMaintainers
-    ? [...new Set([...maintainers, ...contributors])]
-    : contributors
-}
-
-export function getPersonsConsultantOf(
-  person: Maintainer,
-  includeMaintainers = true
-): Library[] {
-  const maintainers = getPersonsMaintainerOf(person)
-  const consultants =
-    person.consultantOf?.map((libraryId) => getLibrary(libraryId)) || []
-
-  return includeMaintainers
-    ? [...new Set([...maintainers, ...consultants])]
-    : consultants
-}
-
 export function getIsCreatorOfLibrary(person: Maintainer, libraryId: string) {
   return person.creatorOf?.includes(libraryId as Library['id'])
 }
 
 export function getIsMaintainerOfLibrary(
   person: Maintainer,
-  libraryId: string
+  libraryId: string,
 ) {
   return person.maintainerOf?.includes(libraryId as Library['id'])
 }
 
 export function getIsContributorOfLibrary(
   person: Maintainer,
-  libraryId: string
+  libraryId: string,
 ) {
   return person.contributorOf?.includes(libraryId as Library['id'])
 }
 
 export function getIsConsultantOfLibrary(
   person: Maintainer,
-  libraryId: string
+  libraryId: string,
 ) {
   return person.consultantOf?.includes(libraryId as Library['id'])
 }
@@ -569,7 +555,7 @@ export function getRoleInLibrary(person: Maintainer, libraryId: string) {
 
 export function getRoleForFilteredLibraries(
   person: Maintainer,
-  libraryIds: Library['id'][] | undefined
+  libraryIds: Library['id'][] | undefined,
 ): 'creator' | 'maintainer' | 'contributor' | 'other' {
   // If no libraries are filtered, use global roles
   if (!libraryIds || libraryIds.length === 0) {
@@ -583,13 +569,13 @@ export function getRoleForFilteredLibraries(
 
   // Check roles only for the filtered libraries
   const isCreatorOfFiltered = libraryIds.some((lib) =>
-    person.creatorOf?.includes(lib)
+    person.creatorOf?.includes(lib),
   )
   const isMaintainerOfFiltered = libraryIds.some((lib) =>
-    person.maintainerOf?.includes(lib)
+    person.maintainerOf?.includes(lib),
   )
   const isContributorOfFiltered = libraryIds.some((lib) =>
-    person.contributorOf?.includes(lib)
+    person.contributorOf?.includes(lib),
   )
 
   if (isCreatorOfFiltered) return 'creator'
@@ -600,7 +586,7 @@ export function getRoleForFilteredLibraries(
 
 export function getRolePriorityForFilteredLibraries(
   person: Maintainer,
-  libraryIds: Library['id'][] | undefined
+  libraryIds: Library['id'][] | undefined,
 ): number {
   const role = getRoleForFilteredLibraries(person, libraryIds)
 
@@ -621,7 +607,7 @@ export function getRolePriorityForFilteredLibraries(
 
 export function getIsCoreMaintainerForFilteredLibraries(
   person: Maintainer,
-  libraryIds: Library['id'][] | undefined
+  libraryIds: Library['id'][] | undefined,
 ): boolean {
   // If no libraries are filtered, use global core maintainer status
   if (!libraryIds || libraryIds.length === 0) {

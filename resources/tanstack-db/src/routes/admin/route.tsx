@@ -4,14 +4,33 @@ import {
   LinkOptions,
   Outlet,
   createFileRoute,
+  redirect,
 } from '@tanstack/react-router'
 import { CgClose, CgMenuLeft } from 'react-icons/cg'
-import { FaHome, FaUser, FaUsers } from 'react-icons/fa'
+import {
+  FaHome,
+  FaUser,
+  FaUsers,
+  FaRss,
+  FaShieldAlt,
+  FaGithub,
+  FaNpm,
+} from 'react-icons/fa'
 import { twMerge } from 'tailwind-merge'
 // Using public asset URL
 import { ClientAdminAuth } from '~/components/ClientAuth'
+import { requireCapability } from '~/utils/auth.server'
 
 export const Route = createFileRoute('/admin')({
+  beforeLoad: async () => {
+    // Call server function directly from beforeLoad (works in both SSR and client)
+    try {
+      const user = await requireCapability({ data: { capability: 'admin' } })
+      return { user }
+    } catch {
+      throw redirect({ to: '/login' })
+    }
+  },
   component: () => {
     return (
       <ClientAdminAuth>
@@ -51,6 +70,26 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
         label: 'Users',
         icon: <FaUsers />,
         to: '/admin/users',
+      },
+      {
+        label: 'Roles',
+        icon: <FaShieldAlt />,
+        to: '/admin/roles',
+      },
+      {
+        label: 'Feed',
+        icon: <FaRss />,
+        to: '/admin/feed',
+      },
+      {
+        label: 'GitHub Stats',
+        icon: <FaGithub />,
+        to: '/admin/github-stats',
+      },
+      {
+        label: 'NPM Stats',
+        icon: <FaNpm />,
+        to: '/admin/npm-stats',
       },
       {
         label: 'My Account',
@@ -126,7 +165,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
     >
       {smallMenu}
       {largeMenu}
-      <div className="flex flex-1 min-h-0 relative justify-center overflow-x-hidden">
+      <div className="flex flex-1 min-h-0 relative justify-center overflow-x-hidden bg-gray-50 dark:bg-gray-900">
         {children}
       </div>
     </div>

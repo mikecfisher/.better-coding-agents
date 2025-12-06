@@ -1,5 +1,5 @@
 import { FaGithub } from 'react-icons/fa'
-import { Library } from '.'
+import type { Library } from './types'
 import { VscPreview } from 'react-icons/vsc'
 import { BiBookAlt } from 'react-icons/bi'
 import { RiLightbulbFlashLine } from 'react-icons/ri'
@@ -16,7 +16,7 @@ export const routerProject = {
   id: 'router',
   name: 'TanStack Router',
   cardStyles: twMerge(
-    `shadow-xl shadow-emerald-700/20 dark:shadow-lg dark:shadow-emerald-500/30 ${textStyles} border-2 border-transparent hover:border-current`
+    `shadow-xl shadow-emerald-700/20 dark:shadow-lg dark:shadow-emerald-500/30 ${textStyles} border-2 border-transparent hover:border-current`,
   ),
   to: '/router',
   tagline: `Type-safe Routing for React and Solid applications`,
@@ -37,6 +37,8 @@ export const routerProject = {
   frameworks: ['react', 'solid'],
   scarfId: '3d14fff2-f326-4929-b5e1-6ecf953d24f4',
   defaultDocs: 'framework/react/overview',
+  installPath: 'framework/$framework/installation',
+  legacyPackages: ['react-location'],
   hideCodesandboxUrl: true,
   showVercelUrl: false,
   showNetlifyUrl: true,
@@ -119,7 +121,7 @@ export const routerProject = {
       throw redirect({
         href: href.replace(
           'router/latest/docs/framework/react/start',
-          'start/latest/docs/framework/react'
+          'start/latest/docs/framework/react',
         ),
       })
     }
@@ -128,9 +130,9 @@ export const routerProject = {
       throw redirect({
         href: href.replace(
           'router/latest/docs/framework/react/examples/start',
-          'start/latest/docs/framework/react/examples/start'
+          'start/latest/docs/framework/react/examples/start',
         ),
       })
     }
   },
-} satisfies Library
+}

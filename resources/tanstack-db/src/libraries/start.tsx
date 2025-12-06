@@ -1,5 +1,5 @@
 import { FaGithub, FaYinYang } from 'react-icons/fa'
-import { Library } from '.'
+import type { Library } from './types'
 import { VscPreview } from 'react-icons/vsc'
 import { BiBookAlt } from 'react-icons/bi'
 import { PiRocketLaunchDuotone, PiTreeStructureBold } from 'react-icons/pi'
@@ -33,6 +33,7 @@ export const startProject = {
   embedEditor: 'codesandbox',
   frameworks: ['react', 'solid'],
   defaultDocs: 'framework/react/overview',
+  installPath: 'framework/$framework/build-from-scratch',
   scarfId: 'b6e2134f-e805-401d-95c3-2a7765d49a3d',
   showNetlifyUrl: true,
   showCloudflareUrl: true,
@@ -158,7 +159,7 @@ export const startProject = {
     // Redirect from /api-routes to /server-routes
     if (
       href.match(
-        /\/start\/(latest|v1)\/docs\/framework\/(react|solid)\/api-routes/
+        /\/start\/(latest|v1)\/docs\/framework\/(react|solid)\/api-routes/,
       )
     ) {
       throw redirect({
@@ -166,4 +167,4 @@ export const startProject = {
       })
     }
   },
-} satisfies Library
+}

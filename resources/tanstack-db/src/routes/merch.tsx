@@ -17,7 +17,8 @@ export const Route = createFileRoute('/merch')({
   head: () => ({
     meta: seo({
       title: 'TanStack Merch',
-      description: 'Official TanStack merchandise including apparel and stickers.',
+      description:
+        'Official TanStack merchandise including apparel and stickers.',
     }),
   }),
 })
@@ -25,7 +26,8 @@ export const Route = createFileRoute('/merch')({
 const merchItems = [
   {
     name: 'Apparel',
-    description: 'T-shirts, sweatshirts, hoodies, onesies, hats, totes, and phone cases featuring TanStack designs',
+    description:
+      'T-shirts, sweatshirts, hoodies, onesies, hats, totes, and phone cases featuring TanStack designs',
     icons: [
       { Icon: LuShirt, label: 'T-shirts' },
       { Icon: PiBaseballCapBold, label: 'Hats' },
@@ -39,7 +41,8 @@ const merchItems = [
   },
   {
     name: 'Stickers & Buttons',
-    description: 'High-quality vinyl stickers and small buttons for your laptop, water bottle, and more',
+    description:
+      'High-quality vinyl stickers and small buttons for your laptop, water bottle, and more',
     icons: [
       { Icon: LuTag, label: 'Stickers' },
       { Icon: LuCircle, label: 'Buttons' },
@@ -78,7 +81,7 @@ function RouteComp() {
                 relative group
                 min-h-[280px] flex flex-col`,
                 item.borderColor,
-                item.hoverShadow
+                item.hoverShadow,
               )}
               style={{
                 zIndex: i,
@@ -107,7 +110,7 @@ function RouteComp() {
                       `inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium
                       bg-black/5 dark:bg-white/10 text-gray-900 dark:text-white
                       group-hover:bg-black/10 dark:group-hover:bg-white/20
-                      transition-colors`
+                      transition-colors`,
                     )}
                   >
                     Shop {item.name}

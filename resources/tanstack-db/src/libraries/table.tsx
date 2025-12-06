@@ -1,5 +1,5 @@
 import { handleRedirects } from '~/utils/handleRedirects.server'
-import { Library } from '.'
+import type { Library } from './types'
 import { VscPreview } from 'react-icons/vsc'
 import { FaGithub, FaBolt, FaCogs } from 'react-icons/fa'
 import { BiBookAlt } from 'react-icons/bi'
@@ -41,13 +41,15 @@ export const tableProject = {
   ],
   scarfId: 'dc8b39e1-3fe9-4f3a-8e56-d4e2cf420a9e',
   defaultDocs: 'introduction',
+  corePackageName: 'table-core',
+  legacyPackages: ['react-table'],
   handleRedirects: (href) => {
     handleRedirects(
       reactTableV7List,
       href,
       '/table/v7',
       '/table/v8',
-      'from=reactTableV7'
+      'from=reactTableV7',
     )
   },
   menu: [
@@ -119,7 +121,7 @@ export const tableProject = {
       ),
     },
   ],
-} satisfies Library
+}
 
 // prettier-ignore
 export const reactTableV7List = [

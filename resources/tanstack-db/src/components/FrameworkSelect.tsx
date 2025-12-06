@@ -2,18 +2,17 @@ import * as React from 'react'
 import { create } from 'zustand'
 import { useNavigate, useParams } from '@tanstack/react-router'
 import { Select } from './Select'
-import {
-  Framework,
-  getFrameworkOptions,
-  getLibrary,
-  LibraryId,
-} from '~/libraries'
+import { Framework, getLibrary, LibraryId } from '~/libraries'
+import { getFrameworkOptions } from '~/libraries/frameworks'
 
 export function FrameworkSelect({ libraryId }: { libraryId: LibraryId }) {
   const library = getLibrary(libraryId)
-  const frameworkConfig = useFrameworkConfig({ frameworks: library.frameworks })
+  const frameworkConfig = useFrameworkConfig({
+    frameworks: library.frameworks,
+  })
   return (
     <Select
+      className="min-w-[120px]"
       label={frameworkConfig.label}
       selected={frameworkConfig.selected}
       available={frameworkConfig.available}
@@ -88,7 +87,7 @@ export function useCurrentFramework(frameworks: Framework[]) {
       })
       localCurrentFramework.setCurrentFramework(framework)
     },
-    [localCurrentFramework, navigate]
+    [localCurrentFramework, navigate],
   )
 
   React.useEffect(() => {

@@ -11,6 +11,7 @@ export function VersionSelect({ libraryId }: { libraryId: LibraryId }) {
   })
   return (
     <Select
+      className="max-w-[93px]"
       label={versionConfig.label}
       selected={versionConfig.selected}
       available={versionConfig.available}
@@ -64,7 +65,7 @@ function useCurrentVersion(versions: string[]) {
       })
       localCurrentVersion.setCurrentVersion(version)
     },
-    [localCurrentVersion, navigate]
+    [localCurrentVersion, navigate],
   )
 
   React.useEffect(() => {
@@ -102,7 +103,7 @@ function useVersionConfig({ versions }: { versions: string[] }) {
           label: 'Latest',
           value: 'latest',
         },
-      ]
+      ],
     )
 
     return {

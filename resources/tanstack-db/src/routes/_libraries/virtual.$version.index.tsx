@@ -14,9 +14,12 @@ import { Framework, getBranch } from '~/libraries'
 import { seo } from '~/utils/seo'
 import LandingPageGad from '~/components/LandingPageGad'
 import { PartnersSection } from '~/components/PartnersSection'
-import OpenSourceStats, { ossStatsQuery } from '~/components/OpenSourceStats'
+import OpenSourceStats from '~/components/OpenSourceStats'
+import { ossStatsQuery } from '~/queries/stats'
 import { CodeBlock } from '~/components/Markdown'
 import { Link, createFileRoute } from '@tanstack/react-router'
+import { AdGate } from '~/contexts/AdsContext'
+import { GamHeader } from '~/components/Gam'
 
 const library = getLibrary('virtual')
 
@@ -57,6 +60,9 @@ function RouteComp() {
       <div className="w-fit mx-auto px-4">
         <OpenSourceStats library={library} />
       </div>
+      <AdGate>
+        <GamHeader />
+      </AdGate>
 
       {/* Minimal code example card */}
       <div className="px-4 space-y-4 flex flex-col items-center ">
